@@ -861,7 +861,7 @@
                 });
 
                 // 设置数据同步
-                setupFirebaseSync();
+                await setupFirebaseSync();
                 isFirebaseReady = true;
                 syncStatus = 'synced';
                 showToast('已连接云端，数据将自动同步', 2000);
@@ -874,30 +874,44 @@
         }
 
         // 设置 Firebase 数据同步
-        function setupFirebaseSync() {
+        async function setupFirebaseSync() {
             if (!userId || !db) return;
 
             const tasksRef = ref(db, `users/${userId}/tasks`);
             const schedulesRef = ref(db, `users/${userId}/schedules`);
 
-            // 监听云端任务变化
+            // 首次检查：云端是否有数据？
+            const tasksSnapshot = await new Promise(resolve => onValue(tasksRef, resolve, { onlyOnce: true }));
+            const schedulesSnapshot = await new Promise(resolve => onValue(schedulesRef, resolve, { onlyOnce: true }));
+
+            const hasCloudTasks = tasksSnapshot.val() !== null;
+            const hasCloudSchedules = schedulesSnapshot.val() !== null;
+            const hasLocalTasks = tasks.length > 0;
+            const hasLocalSchedules = schedules.length > 0;
+
+            // 如果本地有数据但云端没有，先推送本地数据到云端
+            if (hasLocalTasks && !hasCloudTasks) {
+                await saveTasksToFirebase();
+            }
+            if (hasLocalSchedules && !hasCloudSchedules) {
+                await saveSchedulesToFirebase();
+            }
+
+            // 然后设置监听器，实时同步云端变化
             onValue(tasksRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    // 将对象转换为数组
                     const cloudTasks = Object.entries(data).map(([id, item]) => ({
                         ...item,
                         id: parseInt(id) || id
                     }));
-                    // 合并本地和云端数据（以云端为准）
                     tasks = cloudTasks;
                     saveToLocalStorage();
                     renderTasks();
                     updateTaskStats();
                 }
-            }, { onlyOnce: false });
+            });
 
-            // 监听云端日程变化
             onValue(schedulesRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -909,35 +923,9 @@
                     saveToLocalStorage();
                     renderSchedules();
                 }
-            }, { onlyOnce: false });
-
-            // 同步本地数据到云端（首次连接时）
-            syncLocalToFirebase();
+            });
         }
 
-        // 同步本地数据到 Firebase
-        async function syncLocalToFirebase() {
-            if (!db || !userId) return;
-
-            const localTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-            const localSchedules = JSON.parse(localStorage.getItem('schedules') || '[]');
-
-            if (localTasks.length > 0) {
-                const tasksObj = {};
-                localTasks.forEach(task => {
-                    tasksObj[task.id] = task;
-                });
-                await set(ref(db, `users/${userId}/tasks`), tasksObj);
-            }
-
-            if (localSchedules.length > 0) {
-                const schedulesObj = {};
-                localSchedules.forEach(schedule => {
-                    schedulesObj[schedule.id] = schedule;
-                });
-                await set(ref(db, `users/${userId}/schedules`), schedulesObj);
-            }
-        }
 
         // 保存任务到 Firebase
         async function saveTasksToFirebase() {
