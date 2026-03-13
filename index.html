@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#9b7cb6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="时间管理">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="description" content="智能语音时间管理助手">
     <title>时间管理小助手</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192x192.png">
     <style>
         * {
             margin: 0;
@@ -21,93 +19,414 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(180deg, #c4b5e0 0%, #9b7cb6 50%, #7a5a9e 100%);
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            padding: 15px;
-            padding-bottom: 100px;
+            padding: 20px;
+            padding-bottom: 30px;
             -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
-        header {
+        /* 头部标题 */
+        .header {
             text-align: center;
-            color: white;
-            margin-bottom: 20px;
-            padding-top: env(safe-area-inset-top);
+            color: #333;
+            margin-bottom: 25px;
+            padding-top: 10px;
         }
 
-        header h1 {
+        .header h1 {
             font-size: 1.8rem;
-            margin-bottom: 5px;
             font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
         }
 
-        header p {
-            opacity: 0.9;
-            font-size: 0.9rem;
+        .header p {
+            font-size: 0.95rem;
+            color: #555;
+            opacity: 0.8;
         }
 
-        .clock-card {
+        /* 卡片通用样式 */
+        .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 20px;
-            text-align: center;
             margin-bottom: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* 时间卡片 */
+        .time-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 25px 20px;
+        }
+
+        .time-left {
+            display: flex;
+            align-items: baseline;
         }
 
         .time-display {
-            font-size: 3rem;
-            font-weight: 200;
+            font-size: 3.2rem;
+            font-weight: 300;
             color: #333;
-            letter-spacing: 2px;
             font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+        }
+
+        .time-ampm {
+            font-size: 1rem;
+            color: #666;
+            margin-left: 5px;
+            font-weight: 400;
+        }
+
+        .time-right {
+            text-align: right;
         }
 
         .date-display {
             font-size: 1rem;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .weekday-display {
+            font-size: 1rem;
             color: #666;
-            margin-top: 8px;
         }
 
-        .voice-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 16px;
+        /* 日程安排卡片 */
+        .schedule-card {
             padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            text-align: center;
-            color: white;
         }
 
-        .voice-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
         }
 
-        .voice-btn {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: none;
-            background: white;
-            color: #f5576c;
-            font-size: 2.5rem;
+        .more-btn {
+            color: #999;
+            font-size: 1.2rem;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-            margin: 15px 0;
+        }
+
+        /* 输入框 */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .input-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        .schedule-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            color: #333;
+            background: transparent;
+        }
+
+        .schedule-input::placeholder {
+            color: #bbb;
+        }
+
+        .add-btn {
+            background: #9b7cb6;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .add-btn:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+
+        /* 日程列表 */
+        .schedule-section-title {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .time-group {
+            margin-bottom: 15px;
+        }
+
+        .time-group-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .period-label {
+            writing-mode: vertical-lr;
+            text-orientation: upright;
+            font-size: 0.8rem;
+            color: #666;
+            margin-right: 15px;
+            letter-spacing: 2px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: auto;
-            margin-right: auto;
+        }
+
+        .schedule-items {
+            flex: 1;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-time {
+            font-size: 0.95rem;
+            color: #333;
+            width: 50px;
+            font-weight: 500;
+        }
+
+        .schedule-content {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .schedule-delete {
+            color: #ccc;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .schedule-delete:active {
+            color: #ff6b6b;
+        }
+
+        /* 底部功能区 */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1.2fr 0.9fr 0.9fr;
+            gap: 10px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* 任务清单 */
+        .task-stats {
+            font-size: 0.7rem;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .task-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .task-tab {
+            font-size: 0.7rem;
+            color: #666;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+        }
+
+        .task-tab.active {
+            background: #9b7cb6;
+            color: white;
+        }
+
+        .task-list {
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 0.8rem;
+        }
+
+        .task-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox.checked {
+            background: #9b7cb6;
+            border-color: #9b7cb6;
+            color: white;
+            font-size: 10px;
+        }
+
+        .task-text {
+            flex: 1;
+            color: #333;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .add-task-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: #f5f5f5;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #666;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        /* 倒计时 */
+        .countdown-display {
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: #333;
+            text-align: center;
+            margin: 10px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .countdown-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .count-btn {
+            background: #f5f5f5;
+            border: none;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .count-btn:active {
+            background: #9b7cb6;
+            color: white;
+        }
+
+        .count-btn.active {
+            background: #9b7cb6;
+            color: white;
+        }
+
+        /* 语音卡片 */
+        .voice-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c4b5e0 0%, #9b7cb6 100%);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(155, 124, 182, 0.3);
+            transition: all 0.2s;
         }
 
         .voice-btn:active {
@@ -116,338 +435,48 @@
 
         .voice-btn.recording {
             animation: pulse 1.5s infinite;
-            background: #ffeb3b;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(155, 124, 182, 0.5); }
+            50% { box-shadow: 0 0 0 15px rgba(155, 124, 182, 0); }
         }
 
-        .voice-status {
-            font-size: 1rem;
-            margin-top: 8px;
-            min-height: 24px;
+        .voice-icon {
+            font-size: 1.5rem;
+            color: white;
         }
 
         .voice-hint {
-            font-size: 0.8rem;
-            opacity: 0.95;
-            margin-top: 12px;
-            padding: 12px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-        }
-
-        .voice-hint p {
-            margin: 4px 0;
+            font-size: 0.75rem;
+            color: #666;
+            text-align: center;
             line-height: 1.4;
         }
 
-        .voice-hint strong {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-        }
-
-        .card-title::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: #667eea;
-            border-radius: 2px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .tab {
-            padding: 8px 16px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #666;
-            border-radius: 20px;
-            transition: all 0.3s;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 4px;
-            color: #555;
-            font-size: 0.85rem;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e8e8e8;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-
-        .task-list, .reminder-list {
-            list-style: none;
-        }
-
-        .task-item, .reminder-item {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            padding: 14px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            transition: all 0.2s;
-        }
-
-        .task-item:active, .reminder-item:active {
-            transform: scale(0.99);
-        }
-
-        .task-item.completed {
-            opacity: 0.6;
-        }
-
-        .task-item.completed .task-title {
-            text-decoration: line-through;
-            color: #999;
-        }
-
-        .task-item.high-priority { border-left: 4px solid #f5576c; }
-        .task-item.medium-priority { border-left: 4px solid #ffc107; }
-        .task-item.low-priority { border-left: 4px solid #38ef7d; }
-
-        .reminder-item.upcoming { border-left: 4px solid #ffc107; }
-        .reminder-item.overdue { border-left: 4px solid #dc3545; opacity: 0.7; }
-
-        .checkbox {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #667eea;
-            border-radius: 6px;
-            margin-right: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 2px;
-            font-size: 14px;
-            color: white;
-            transition: all 0.2s;
-        }
-
-        .checkbox.checked {
-            background: #667eea;
-        }
-
-        .task-info, .reminder-info {
-            flex: 1;
-            display: flex;
-            align-items: flex-start;
-            min-width: 0;
-        }
-
-        .task-text, .reminder-text {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .task-title, .reminder-title {
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 4px;
-            font-size: 0.95rem;
-            word-break: break-word;
-        }
-
-        .task-meta, .reminder-time {
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .priority-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            margin-left: 6px;
-            font-weight: 500;
-        }
-
-        .priority-high { background: #ffebee; color: #c62828; }
-        .priority-medium { background: #fff8e1; color: #f57f17; }
-        .priority-low { background: #e8f5e9; color: #2e7d32; }
-
-        .task-actions, .reminder-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-delete {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .btn-edit {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
-
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 12px;
-            opacity: 0.4;
-        }
-
-        .empty-state p {
-            font-size: 0.95rem;
-        }
-
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .stat-box {
-            background: #f8f9fa;
-            padding: 12px 8px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 4px;
-        }
-
+        /* Toast */
         .toast {
             position: fixed;
-            bottom: 100px;
+            bottom: 50%;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(0,0,0,0.85);
+            transform: translate(-50%, 50%) scale(0.9);
+            background: rgba(0,0,0,0.8);
             color: white;
-            padding: 14px 28px;
-            border-radius: 30px;
-            font-size: 0.95rem;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.9rem;
             opacity: 0;
             transition: all 0.3s;
             z-index: 3000;
             pointer-events: none;
-            backdrop-filter: blur(10px);
         }
 
         .toast.show {
-            transform: translateX(-50%) translateY(0);
             opacity: 1;
+            transform: translate(-50%, 50%) scale(1);
         }
 
+        /* 弹窗 */
         .modal {
             display: none;
             position: fixed;
@@ -455,12 +484,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
             z-index: 4000;
             padding: 20px;
-            backdrop-filter: blur(5px);
         }
 
         .modal.show {
@@ -469,27 +497,26 @@
 
         .modal-content {
             background: white;
-            padding: 30px 25px;
+            padding: 30px;
             border-radius: 20px;
             text-align: center;
-            max-width: 320px;
+            max-width: 300px;
             width: 100%;
             animation: modalPop 0.3s;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
         @keyframes modalPop {
-            0% { transform: scale(0.8); opacity: 0; }
+            0% { transform: scale(0.9); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
         .modal-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 15px;
         }
 
         .modal-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: #333;
             margin-bottom: 10px;
             font-weight: 600;
@@ -498,522 +525,292 @@
         .modal-message {
             color: #666;
             margin-bottom: 20px;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .countdown-display {
-            font-size: 3.5rem;
-            font-weight: 200;
-            color: #667eea;
-            text-align: center;
-            margin: 15px 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .countdown-label {
-            text-align: center;
-            color: #666;
-            margin-bottom: 15px;
             font-size: 0.95rem;
         }
 
-        .voice-result {
-            background: rgba(255,255,255,0.98);
-            color: #333;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            display: none;
+        .modal-btn {
+            background: #9b7cb6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .modal-btn:active {
+            opacity: 0.9;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: #bbb;
+            font-size: 0.85rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 380px) {
+            .time-display {
+                font-size: 2.8rem;
+            }
+            .bottom-section {
+                grid-template-columns: 1fr;
+            }
+            .feature-card {
+                display: flex;
+                gap: 15px;
+            }
+            .voice-card {
+                flex-direction: row;
+            }
+        }
+
+        /* 语音结果弹窗 */
+        .voice-result-modal {
             text-align: left;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .voice-result.show {
-            display: block;
-            animation: slideDown 0.3s;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .voice-result-title {
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #667eea;
+            color: #9b7cb6;
+            margin-bottom: 10px;
             font-size: 0.9rem;
+        }
+
+        .voice-result-content {
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         .voice-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
         }
 
         .voice-actions button {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            font-size: 0.9rem;
         }
 
         .voice-confirm {
-            background: #38ef7d;
+            background: #9b7cb6;
             color: white;
         }
 
         .voice-cancel {
             background: #f0f0f0;
-            color: #333;
+            color: #666;
         }
 
-        .install-banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            display: none;
+        /* 时间选择器 */
+        .time-input-wrapper {
+            display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 15px;
+            gap: 5px;
         }
 
-        .install-banner.show {
-            display: flex;
-        }
-
-        .install-banner-text {
-            flex: 1;
-            font-size: 0.9rem;
-        }
-
-        .install-banner-btn {
-            background: white;
-            color: #667eea;
+        .time-input {
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .install-close {
-            font-size: 1.5rem;
-            cursor: pointer;
-            opacity: 0.8;
-        }
-
-        /* 底部导航 */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 2000;
-        }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            cursor: pointer;
-            color: #999;
-            transition: all 0.2s;
-        }
-
-        .nav-item.active {
-            color: #667eea;
-        }
-
-        .nav-item span {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 2px;
-        }
-
-        .nav-item label {
-            font-size: 0.7rem;
-            display: block;
-        }
-
-        /* 页面切换 */
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 桌面端适配 */
-        @media (min-width: 768px) {
-            body {
-                padding-bottom: 20px;
-            }
-            .bottom-nav {
-                display: none;
-            }
-            .page {
-                display: block !important;
-            }
-            header h1 {
-                font-size: 2.2rem;
-            }
-            .time-display {
-                font-size: 4rem;
-            }
-        }
-
-        /* 小屏幕优化 */
-        @media (max-width: 360px) {
-            .time-display {
-                font-size: 2.5rem;
-            }
-            .voice-btn {
-                width: 80px;
-                height: 80px;
-                font-size: 2rem;
-            }
-            .countdown-display {
-                font-size: 3rem;
-            }
-            .btn-small {
-                padding: 5px 10px;
-                font-size: 0.75rem;
-            }
-        }
-
-        /* 振动反馈 */
-        .vibrate {
-            animation: vibrate 0.3s;
-        }
-
-        @keyframes vibrate {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-3px); }
-            75% { transform: translateX(3px); }
+            outline: none;
+            font-size: 0.9rem;
+            color: #666;
+            background: transparent;
+            width: 70px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🎯 时间管理</h1>
-            <p>语音添加，智能提醒</p>
-        </header>
-
-        <!-- 安装提示 -->
-        <div class="install-banner" id="installBanner">
-            <div class="install-banner-text">
-                <strong>添加到主屏幕</strong><br>
-                <span style="font-size: 0.8rem; opacity: 0.9">像 App 一样使用，离线也能用</span>
-            </div>
-            <button class="install-banner-btn" onclick="installApp()">安装</button>
-            <span class="install-close" onclick="dismissInstall()">×</span>
+        <!-- 头部 -->
+        <div class="header">
+            <h1>时间管理小助手</h1>
+            <p>更温柔地安排每一天</p>
         </div>
 
-        <!-- 首页：语音 + 任务 -->
-        <div class="page active" id="page-home">
-            <div class="clock-card">
-                <div class="time-display" id="clock">00:00</div>
-                <div class="date-display" id="date">加载中...</div>
+        <!-- 时间卡片 -->
+        <div class="card time-card">
+            <div class="time-left">
+                <span class="time-display" id="clock">10:09</span>
+                <span class="time-ampm" id="ampm">AM</span>
+            </div>
+            <div class="time-right">
+                <div class="date-display" id="date">2023年10月24日</div>
+                <div class="weekday-display" id="weekday">星期二</div>
+            </div>
+        </div>
+
+        <!-- 日程安排 -->
+        <div class="card schedule-card">
+            <div class="card-header">
+                <span class="card-title">日程安排</span>
+                <span class="more-btn">...</span>
             </div>
 
-            <div class="voice-card">
-                <h3>🎤 语音添加</h3>
-                <p style="opacity: 0.9; font-size: 0.85rem;">按住说话，自动识别</p>
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <span class="input-label">安排内容</span>
+                    <input type="text" class="schedule-input" id="scheduleInput" placeholder="请输入安排内容">
+                </div>
+                <button class="add-btn" onclick="addSchedule()">添加提醒 / 加入日程</button>
+            </div>
+
+            <div class="schedule-section-title">今日的优先提醒</div>
+
+            <div class="timeline" id="scheduleList">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 底部功能区 -->
+        <div class="bottom-section">
+            <!-- 任务清单 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-title">任务清单</span>
+                    <span class="more-btn">...</span>
+                </div>
+                <div class="task-stats">
+                    总计任务 <span id="totalCount">0</span> ·
+                    待办 <span id="pendingCount">0</span> ·
+                    已完成 <span id="completedCount">0</span>
+                </div>
+                <div class="task-tabs">
+                    <button class="task-tab active" onclick="switchTaskTab('all', this)">全部</button>
+                    <button class="task-tab" onclick="switchTaskTab('pending', this)">待办</button>
+                    <button class="task-tab" onclick="switchTaskTab('completed', this)">已完成</button>
+                </div>
+                <div class="task-list" id="taskList">
+                    <!-- 动态生成 -->
+                </div>
+                <button class="add-task-btn" onclick="showAddTaskModal()">
+                    <span>+</span> 添加任务
+                </button>
+            </div>
+
+            <!-- 快速倒计时 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-title">快速倒计时</span>
+                </div>
+                <div class="countdown-display" id="countdown">00:00</div>
+                <div class="countdown-buttons">
+                    <button class="count-btn" onclick="startCountdown(5)">5分钟</button>
+                    <button class="count-btn" onclick="startCountdown(10)">10分钟</button>
+                    <button class="count-btn" onclick="startCountdown(25)">25分钟</button>
+                    <button class="count-btn" onclick="stopCountdown()">停止</button>
+                </div>
+            </div>
+
+            <!-- 语音添加 -->
+            <div class="feature-card voice-card">
+                <div class="feature-title">语音添加</div>
                 <button class="voice-btn" id="voiceBtn"
                     ontouchstart="startVoice(event)"
                     ontouchend="stopVoice(event)"
                     onmousedown="startVoice(event)"
                     onmouseup="stopVoice(event)"
-                    onmouseleave="stopVoice(event)"
-                >🎙️</button>
-                <div class="voice-status" id="voiceStatus">按住麦克风说话</div>
-
-                <div class="voice-result" id="voiceResult">
-                    <div class="voice-result-title">识别结果：</div>
-                    <div id="voiceText" style="color: #666; font-size: 0.9rem; margin-bottom: 8px;"></div>
-                    <div id="voiceParsed" style="font-size: 0.95rem;"></div>
-                    <div class="voice-actions">
-                        <button class="voice-confirm" onclick="confirmVoiceAdd()">✓ 确认</button>
-                        <button class="voice-cancel" onclick="cancelVoiceAdd()">✗ 取消</button>
-                    </div>
-                </div>
-
+                    onmouseleave="stopVoice(event)">
+                    <span class="voice-icon">🎙</span>
+                </button>
                 <div class="voice-hint">
-                    <p><strong>试试这样说：</strong></p>
-                    <p>"下午三点开会"</p>
-                    <p>"20分钟后喝水"</p>
-                    <p>"买牛奶高优先级"</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">📋 任务清单</h2>
-
-                <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-number" id="totalTasks">0</div>
-                        <div class="stat-label">总任务</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="pendingTasks">0</div>
-                        <div class="stat-label">待办</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="completedTasks">0</div>
-                        <div class="stat-label">已完成</div>
-                    </div>
-                </div>
-
-                <form id="taskForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" id="taskTitle" placeholder="输入新任务..." required>
-                        </div>
-                        <div class="form-group">
-                            <select id="taskPriority">
-                                <option value="low">低</option>
-                                <option value="medium" selected>中</option>
-                                <option value="high">高</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-success">➕ 添加任务</button>
-                </form>
-
-                <div class="tabs" style="margin-top: 15px;">
-                    <button class="tab active" onclick="switchTaskTab('all')" id="tab-all">全部</button>
-                    <button class="tab" onclick="switchTaskTab('pending')" id="tab-pending">待办</button>
-                    <button class="tab" onclick="switchTaskTab('completed')" id="tab-completed">已完成</button>
-                </div>
-
-                <ul class="task-list" id="taskList">
-                    <li class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 11l3 3L22 4"/>
-                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-                        </svg>
-                        <p>暂无任务，语音或手动添加</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 提醒页面 -->
-        <div class="page" id="page-reminders">
-            <div class="card" style="margin-top: 10px;">
-                <h2 class="card-title">⏰ 日程提醒</h2>
-                <form id="reminderForm">
-                    <div class="form-group">
-                        <input type="text" id="reminderTitle" placeholder="提醒内容..." required>
-                    </div>
-                    <div class="form-group">
-                        <input type="datetime-local" id="reminderTime" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">➕ 添加提醒</button>
-                </form>
-
-                <ul class="reminder-list" id="reminderList" style="margin-top: 15px;">
-                    <li class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 6v6l4 2"></path>
-                        </svg>
-                        <p>暂无提醒事项</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 计时器页面 -->
-        <div class="page" id="page-timer">
-            <div class="card" style="margin-top: 10px;">
-                <h2 class="card-title">⏱️ 快速倒计时</h2>
-                <div class="countdown-display" id="countdown">00:00</div>
-                <div class="countdown-label">点击开始倒计时</div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                    <button class="btn btn-primary" onclick="startQuickTimer(5)">5分钟</button>
-                    <button class="btn btn-primary" onclick="startQuickTimer(10)">10分钟</button>
-                    <button class="btn btn-primary" onclick="startQuickTimer(25)">25分钟</button>
-                </div>
-                <button class="btn btn-edit" onclick="stopQuickTimer()" style="margin-top: 10px;">停止计时</button>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">⚡ 快捷操作</h2>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                    <button class="btn btn-primary" onclick="quickAddReminder('喝水', 30)">💧 30分钟后喝水</button>
-                    <button class="btn btn-primary" onclick="quickAddReminder('休息眼睛', 45)">👁️ 45分钟护眼</button>
-                    <button class="btn btn-success" onclick="quickAddTask('运动', 'medium')">🏃 添加运动任务</button>
-                    <button class="btn btn-success" onclick="quickAddTask('阅读', 'low')">📚 添加阅读任务</button>
+                    点击说出你的<br>提醒或任务
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 底部导航 -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchPage('home')">
-            <span>🏠</span>
-            <label>首页</label>
-        </div>
-        <div class="nav-item" onclick="switchPage('reminders')">
-            <span>⏰</span>
-            <label>提醒</label>
-        </div>
-        <div class="nav-item" onclick="switchPage('timer')">
-            <span>⏱️</span>
-            <label>计时</label>
-        </div>
-    </nav>
-
+    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
+    <!-- 提醒弹窗 -->
     <div class="modal" id="alarmModal" onclick="closeAlarm()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-icon">⏰</div>
             <div class="modal-title" id="alarmTitle">时间到！</div>
             <div class="modal-message" id="alarmMessage">你的提醒时间到了</div>
-            <button class="btn btn-primary" onclick="closeAlarm()">我知道了</button>
+            <button class="modal-btn" onclick="closeAlarm()">我知道了</button>
+        </div>
+    </div>
+
+    <!-- 语音结果弹窗 -->
+    <div class="modal" id="voiceModal">
+        <div class="modal-content voice-result-modal">
+            <div class="voice-result-title">识别结果</div>
+            <div class="voice-result-content" id="voiceResultContent">
+                <!-- 动态内容 -->
+            </div>
+            <div class="voice-actions">
+                <button class="voice-confirm" onclick="confirmVoiceAdd()">确认添加</button>
+                <button class="voice-cancel" onclick="closeVoiceModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加任务弹窗 -->
+    <div class="modal" id="addTaskModal">
+        <div class="modal-content">
+            <div class="modal-title" style="margin-bottom: 15px;">添加新任务</div>
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="newTaskInput" placeholder="输入任务内容"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.95rem;">
+            </div>
+            <div class="voice-actions">
+                <button class="voice-confirm" onclick="confirmAddTask()">添加</button>
+                <button class="voice-cancel" onclick="closeAddTaskModal()">取消</button>
+            </div>
         </div>
     </div>
 
     <script>
         // 数据存储
         let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+        let schedules = JSON.parse(localStorage.getItem('schedules') || '[]');
         let countdownInterval = null;
         let currentTaskTab = 'all';
-        let currentPage = 'home';
-
-        // 语音识别
         let recognition = null;
-        let voiceParsedData = null;
-        let isRecording = false;
-
-        // 安装提示
-        let deferredPrompt = null;
+        let voiceData = null;
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();
             setInterval(updateClock, 1000);
             renderTasks();
-            renderReminders();
+            renderSchedules();
             updateTaskStats();
             checkReminders();
             setInterval(checkReminders, 1000);
-
-            // 设置默认时间
-            const now = new Date();
-            now.setMinutes(now.getMinutes() + 30);
-            document.getElementById('reminderTime').value = now.toISOString().slice(0, 16);
-
-            // 初始化语音识别
             initSpeechRecognition();
-
-            // 检查安装状态
-            checkInstallStatus();
-
-            // 请求通知权限
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
         });
 
-        // 检查安装状态
-        function checkInstallStatus() {
-            // 检测是否已安装
-            if (window.matchMedia('(display-mode: standalone)').matches ||
-                window.navigator.standalone === true) {
-                document.getElementById('installBanner').style.display = 'none';
-                return;
-            }
+        // 更新时钟
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
 
-            // 显示安装提示（延迟3秒）
-            setTimeout(() => {
-                if (!localStorage.getItem('installDismissed')) {
-                    document.getElementById('installBanner').classList.add('show');
-                }
-            }, 3000);
-
-            // 监听安装事件
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                document.getElementById('installBanner').classList.add('show');
-            });
+            document.getElementById('clock').textContent = `${displayHours}:${minutes}`;
+            document.getElementById('ampm').textContent = ampm;
+            document.getElementById('date').textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+            document.getElementById('weekday').textContent = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][now.getDay()];
         }
 
-        function dismissInstall() {
-            document.getElementById('installBanner').classList.remove('show');
-            localStorage.setItem('installDismissed', 'true');
-        }
-
-        async function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    showToast('已添加到主屏幕！');
-                }
-                deferredPrompt = null;
-            } else {
-                // iOS Safari 提示
-                showToast('请使用浏览器"分享"→"添加到主屏幕"');
-            }
-            document.getElementById('installBanner').classList.remove('show');
-        }
-
-        // 页面切换
-        function switchPage(page) {
-            currentPage = page;
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById(`page-${page}`).classList.add('active');
-            event.currentTarget.classList.add('active');
-
-            // 振动反馈
-            vibrate();
-        }
-
-        // 振动反馈
-        function vibrate() {
-            if ('vibrate' in navigator) {
-                navigator.vibrate(10);
-            }
-        }
-
-        // 初始化语音识别 - 按住说话模式
+        // 初始化语音识别
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                document.getElementById('voiceStatus').textContent = '您的设备不支持语音';
-                document.getElementById('voiceBtn').style.display = 'none';
-                return;
-            }
+            if (!SpeechRecognition) return;
 
             recognition = new SpeechRecognition();
             recognition.lang = 'zh-CN';
@@ -1021,463 +818,250 @@
             recognition.interimResults = false;
 
             recognition.onstart = () => {
-                isRecording = true;
                 document.getElementById('voiceBtn').classList.add('recording');
-                document.getElementById('voiceStatus').textContent = '正在听...';
-                vibrate();
             };
 
             recognition.onend = () => {
-                isRecording = false;
                 document.getElementById('voiceBtn').classList.remove('recording');
-                document.getElementById('voiceStatus').textContent = '按住麦克风说话';
             };
 
             recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                processVoiceInput(transcript);
+                const text = event.results[0][0].transcript;
+                processVoiceInput(text);
             };
 
-            recognition.onerror = (event) => {
-                isRecording = false;
+            recognition.onerror = () => {
                 document.getElementById('voiceBtn').classList.remove('recording');
-                if (event.error !== 'aborted') {
-                    document.getElementById('voiceStatus').textContent = '没听清，请重试';
-                    showToast('请再说一次');
-                }
             };
         }
 
-        // 按住开始语音
         function startVoice(e) {
             e.preventDefault();
-            if (!recognition || isRecording) return;
+            if (!recognition) {
+                showToast('您的设备不支持语音识别');
+                return;
+            }
             try {
                 recognition.start();
-            } catch (err) {
-                console.log('Recognition start error:', err);
-            }
+            } catch (err) {}
         }
 
-        // 松开结束语音
         function stopVoice(e) {
             e.preventDefault();
-            if (!recognition || !isRecording) return;
-            try {
-                recognition.stop();
-            } catch (err) {
-                console.log('Recognition stop error:', err);
+            if (recognition) {
+                try {
+                    recognition.stop();
+                } catch (err) {}
             }
         }
 
-        // 处理语音输入
+        // 解析语音
         function processVoiceInput(text) {
-            document.getElementById('voiceText').textContent = text;
-
-            const parsed = parseVoiceCommand(text);
-            voiceParsedData = parsed;
-
-            let parsedText = '';
-            if (parsed.type === 'reminder') {
-                parsedText = `📅 提醒：${parsed.title}<br>🕐 ${new Date(parsed.time).toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}`;
-            } else {
-                parsedText = `📋 任务：${parsed.title}`;
-                if (parsed.priority !== 'medium') {
-                    parsedText += `<br>🔥 ${parsed.priority === 'high' ? '高优先级' : '低优先级'}`;
-                }
-                if (parsed.deadline) {
-                    parsedText += `<br>📅 ${new Date(parsed.deadline).toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}`;
-                }
-            }
-
-            document.getElementById('voiceParsed').innerHTML = parsedText;
-            document.getElementById('voiceResult').classList.add('show');
-            vibrate();
-        }
-
-        // 解析语音命令（优化版）
-        function parseVoiceCommand(text) {
             const now = new Date();
             let type = 'task';
             let title = text;
             let time = null;
-            let priority = 'medium';
-            let deadline = null;
 
-            // 判断类型
-            if (text.includes('提醒') || text.includes('闹钟') || text.includes('叫我') || text.includes('记得')) {
-                type = 'reminder';
+            // 判断是提醒还是任务
+            if (text.includes('提醒') || text.includes('闹钟') || text.includes('叫我')) {
+                type = 'schedule';
             }
 
-            // 解析优先级
-            if (text.includes('高') || text.includes('重要') || text.includes('紧急') || text.includes('着急')) {
-                priority = 'high';
-            } else if (text.includes('低') || text.includes('不急') || text.includes('随便')) {
-                priority = 'low';
-            }
-
-            // 解析 "X分钟后"
+            // 解析时间
             const minuteMatch = text.match(/(\d+)\s*分钟\s*后?/);
             if (minuteMatch) {
                 time = new Date(now.getTime() + parseInt(minuteMatch[1]) * 60000);
                 title = title.replace(/\d+\s*分钟\s*后?/, '').trim();
             }
 
-            // 解析 "X小时后"
             const hourMatch = text.match(/(\d+)\s*小时\s*后?/);
             if (hourMatch && !time) {
                 time = new Date(now.getTime() + parseInt(hourMatch[1]) * 3600000);
                 title = title.replace(/\d+\s*小时\s*后?/, '').trim();
             }
 
-            // 解析 "明天"
-            const tomorrowMatch = text.match(/明天\s*(上午|下午|晚上)?\s*(\d+)?\s*[点:：]?/);
-            if (tomorrowMatch && !time) {
-                time = new Date(now);
-                time.setDate(time.getDate() + 1);
-                if (tomorrowMatch[2]) {
-                    let hour = parseInt(tomorrowMatch[2]);
-                    if (tomorrowMatch[1] === '下午' || tomorrowMatch[1] === '晚上') {
-                        if (hour !== 12) hour += 12;
-                    }
-                    time.setHours(hour, 0, 0, 0);
-                } else {
-                    time.setHours(9, 0, 0, 0);
-                }
-                title = title.replace(/明天\s*(上午|下午|晚上)?\s*\d*\s*[点:：]?/, '').trim();
-            }
-
-            // 解析 "今天/今晚"
-            const todayMatch = text.match(/(今天|今晚)\s*(\d+)?\s*[点:：]?/);
-            if (todayMatch && !time) {
-                time = new Date(now);
-                if (todayMatch[2]) {
-                    let hour = parseInt(todayMatch[2]);
-                    if (todayMatch[1] === '今晚') {
-                        if (hour < 12) hour += 12;
-                    }
-                    if (hour <= now.getHours() && todayMatch[1] !== '今晚') {
-                        time.setDate(time.getDate() + 1);
-                    }
-                    time.setHours(hour, 0, 0, 0);
-                } else if (todayMatch[1] === '今晚') {
-                    time.setHours(20, 0, 0, 0);
-                }
-                title = title.replace(/(今天|今晚)\s*\d*\s*[点:：]?/, '').trim();
-            }
-
-            // 解析 "下午X点" "晚上X点"
-            const timeMatch = text.match(/(上午|下午|晚上)\s*(\d+)[点:：]/);
-            if (timeMatch && !time) {
-                time = new Date(now);
-                let hour = parseInt(timeMatch[2]);
-                if (timeMatch[1] === '下午' || timeMatch[1] === '晚上') {
-                    if (hour !== 12) hour += 12;
-                }
-                if (hour <= now.getHours()) {
-                    time.setDate(time.getDate() + 1);
-                }
-                time.setHours(hour, 0, 0, 0);
-                title = title.replace(/(上午|下午|晚上)\s*\d+[点:：]/, '').trim();
-            }
-
             // 清理标题
-            title = title.replace(/^(提醒我|添加|我要|帮我|记一下|记录|设个|定个)/, '').trim();
-            title = title.replace(/(高优先级|中优先级|低优先级|高|低|重要|紧急|不急)/, '').trim();
+            title = title.replace(/^(提醒我|添加|我要|帮我|记一下)/, '').trim();
 
-            if (type === 'reminder') {
-                if (!time) time = new Date(now.getTime() + 30 * 60000);
-                return { type, title: title || '提醒事项', time: time.getTime() };
-            } else {
-                if (time) deadline = time.getTime();
-                return { type, title: title || '新任务', priority, deadline };
+            voiceData = { type, title: title || '新事项', time };
+
+            // 显示识别结果
+            let content = `<strong>${type === 'schedule' ? '提醒' : '任务'}</strong>：${title}`;
+            if (time) {
+                content += `<br><strong>时间</strong>：${time.toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}`;
             }
+            document.getElementById('voiceResultContent').innerHTML = content;
+            document.getElementById('voiceModal').classList.add('show');
         }
 
-        // 确认语音添加
         function confirmVoiceAdd() {
-            if (!voiceParsedData) return;
+            if (!voiceData) return;
 
-            if (voiceParsedData.type === 'reminder') {
-                reminders.push({
+            if (voiceData.type === 'schedule' && voiceData.time) {
+                schedules.push({
                     id: Date.now(),
-                    title: voiceParsedData.title,
-                    time: voiceParsedData.time,
-                    notified: false
+                    title: voiceData.title,
+                    time: voiceData.time.getTime(),
+                    completed: false
                 });
-                reminders.sort((a, b) => a.time - b.time);
-                saveReminders();
-                renderReminders();
-                showToast('提醒已添加！');
+                saveSchedules();
+                renderSchedules();
+                showToast('提醒已添加');
             } else {
                 tasks.push({
                     id: Date.now(),
-                    title: voiceParsedData.title,
-                    priority: voiceParsedData.priority,
-                    deadline: voiceParsedData.deadline,
+                    title: voiceData.title,
                     completed: false,
                     createdAt: Date.now()
                 });
                 saveTasks();
                 renderTasks();
                 updateTaskStats();
-                showToast('任务已添加！');
+                showToast('任务已添加');
             }
 
-            cancelVoiceAdd();
-            vibrate();
+            closeVoiceModal();
         }
 
-        function cancelVoiceAdd() {
-            document.getElementById('voiceResult').classList.remove('show');
-            voiceParsedData = null;
+        function closeVoiceModal() {
+            document.getElementById('voiceModal').classList.remove('show');
+            voiceData = null;
         }
 
-        // 更新时钟
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', {
-                month: 'short',
-                day: 'numeric',
-                weekday: 'short'
-            });
-        }
-
-        // 快捷添加
-        function quickAddReminder(title, minutes) {
-            const time = new Date(Date.now() + minutes * 60000);
-            reminders.push({
-                id: Date.now(),
-                title: title,
-                time: time.getTime(),
-                notified: false
-            });
-            reminders.sort((a, b) => a.time - b.time);
-            saveReminders();
-            renderReminders();
-            showToast(`${minutes}分钟后提醒：${title}`);
-            vibrate();
-        }
-
-        function quickAddTask(title, priority) {
-            tasks.push({
-                id: Date.now(),
-                title: title,
-                priority: priority,
-                deadline: null,
-                completed: false,
-                createdAt: Date.now()
-            });
-            saveTasks();
-            renderTasks();
-            updateTaskStats();
-            showToast('任务已添加！');
-            vibrate();
-        }
-
-        // 表单提交
-        document.getElementById('taskForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('taskTitle').value.trim();
-            const priority = document.getElementById('taskPriority').value;
-
+        // 添加日程
+        function addSchedule() {
+            const input = document.getElementById('scheduleInput');
+            const title = input.value.trim();
             if (!title) return;
 
-            tasks.push({
-                id: Date.now(),
-                title,
-                priority,
-                deadline: null,
-                completed: false,
-                createdAt: Date.now()
-            });
-            saveTasks();
-            renderTasks();
-            updateTaskStats();
+            // 尝试解析时间
+            const now = new Date();
+            let time = null;
 
-            document.getElementById('taskTitle').value = '';
-            showToast('任务已添加！');
-            vibrate();
-        });
-
-        document.getElementById('reminderForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('reminderTitle').value.trim();
-            const time = document.getElementById('reminderTime').value;
-
-            if (!title || !time) return;
-
-            reminders.push({
-                id: Date.now(),
-                title,
-                time: new Date(time).getTime(),
-                notified: false
-            });
-            reminders.sort((a, b) => a.time - b.time);
-            saveReminders();
-            renderReminders();
-
-            document.getElementById('reminderTitle').value = '';
-            showToast('提醒已添加！');
-            vibrate();
-        });
-
-        // 保存数据
-        function saveTasks() {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-        }
-
-        function saveReminders() {
-            localStorage.setItem('reminders', JSON.stringify(reminders));
-        }
-
-        // 切换任务标签
-        function switchTaskTab(tab) {
-            currentTaskTab = tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            renderTasks();
-            vibrate();
-        }
-
-        // 渲染任务
-        function renderTasks() {
-            const list = document.getElementById('taskList');
-            let filteredTasks = tasks;
-
-            if (currentTaskTab === 'pending') {
-                filteredTasks = tasks.filter(t => !t.completed);
-            } else if (currentTaskTab === 'completed') {
-                filteredTasks = tasks.filter(t => t.completed);
+            const timeMatch = title.match(/(\d{1,2})[:点：](\d{0,2})/);
+            if (timeMatch) {
+                time = new Date(now);
+                time.setHours(parseInt(timeMatch[1]), parseInt(timeMatch[2]) || 0, 0, 0);
+                if (time < now) time.setDate(time.getDate() + 1);
             }
 
-            filteredTasks.sort((a, b) => {
-                if (a.completed !== b.completed) return a.completed ? 1 : -1;
-                const priorityWeight = { high: 3, medium: 2, low: 1 };
-                if (priorityWeight[a.priority] !== priorityWeight[b.priority]) {
-                    return priorityWeight[b.priority] - priorityWeight[a.priority];
-                }
-                return b.createdAt - a.createdAt;
+            schedules.push({
+                id: Date.now(),
+                title: title.replace(/\d{1,2}[:点：]\d{0,2}/, '').trim() || title,
+                time: time ? time.getTime() : null,
+                completed: false
             });
 
-            if (filteredTasks.length === 0) {
-                list.innerHTML = `
-                    <li class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 11l3 3L22 4"/>
-                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-                        </svg>
-                        <p>${currentTaskTab === 'completed' ? '还没有完成的任务' : '暂无任务，语音或手动添加'}</p>
-                    </li>
-                `;
-                return;
-            }
-
-            list.innerHTML = filteredTasks.map(t => {
-                const priorityBadge = t.priority !== 'medium' ?
-                    `<span class="priority-badge priority-${t.priority}">${t.priority === 'high' ? '高' : '低'}</span>` : '';
-
-                let deadlineText = '';
-                if (t.deadline) {
-                    const deadline = new Date(t.deadline);
-                    const now = Date.now();
-                    const isOverdue = deadline < now && !t.completed;
-                    deadlineText = `<br>📅 ${isOverdue ? '已逾期' : deadline.toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
-                }
-
-                return `
-                    <li class="task-item ${t.priority}-priority ${t.completed ? 'completed' : ''}">
-                        <div class="task-info">
-                            <div class="checkbox ${t.completed ? 'checked' : ''}" onclick="toggleTask(${t.id})">
-                                ${t.completed ? '✓' : ''}
-                            </div>
-                            <div class="task-text">
-                                <div class="task-title">${escapeHtml(t.title)}${priorityBadge}</div>
-                                <div class="task-meta">${deadlineText}</div>
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <button class="btn-small btn-delete" onclick="deleteTask(${t.id})">删除</button>
-                        </div>
-                    </li>
-                `;
-            }).join('');
+            saveSchedules();
+            renderSchedules();
+            input.value = '';
+            showToast('日程已添加');
         }
 
-        // 渲染提醒
-        function renderReminders() {
-            const list = document.getElementById('reminderList');
+        // 渲染日程
+        function renderSchedules() {
+            const container = document.getElementById('scheduleList');
             const now = Date.now();
 
-            reminders = reminders.filter(r => r.time > now - 3600000 || !r.notified);
-            saveReminders();
+            // 过滤掉已完成的旧日程
+            schedules = schedules.filter(s => !s.completed || s.time > now - 86400000);
+            saveSchedules();
 
-            if (reminders.length === 0) {
-                list.innerHTML = `
-                    <li class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 6v6l4 2"></path>
-                        </svg>
-                        <p>暂无提醒事项</p>
-                    </li>
-                `;
+            // 按时间分组
+            const groups = { morning: [], afternoon: [], evening: [] };
+
+            schedules.filter(s => !s.completed).forEach(s => {
+                if (s.time) {
+                    const hour = new Date(s.time).getHours();
+                    if (hour < 12) groups.morning.push(s);
+                    else if (hour < 18) groups.afternoon.push(s);
+                    else groups.evening.push(s);
+                } else {
+                    groups.morning.push(s);
+                }
+            });
+
+            let html = '';
+
+            if (groups.morning.length > 0) {
+                html += renderTimeGroup('上午', groups.morning);
+            }
+            if (groups.afternoon.length > 0) {
+                html += renderTimeGroup('下午', groups.afternoon);
+            }
+            if (groups.evening.length > 0) {
+                html += renderTimeGroup('晚上', groups.evening);
+            }
+
+            if (html === '') {
+                html = '<div class="empty-state">暂无日程安排</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderTimeGroup(period, items) {
+            items.sort((a, b) => (a.time || 0) - (b.time || 0));
+
+            return `
+                <div class="time-group">
+                    <div class="time-group-header">
+                        <span class="period-label">${period}</span>
+                        <div class="schedule-items">
+                            ${items.map(item => `
+                                <div class="schedule-item">
+                                    <span class="schedule-time">${item.time ? new Date(item.time).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'}) : '--:--'}</span>
+                                    <span class="schedule-content">${escapeHtml(item.title)}</span>
+                                    <span class="schedule-delete" onclick="deleteSchedule(${item.id})">×</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function deleteSchedule(id) {
+            schedules = schedules.filter(s => s.id !== id);
+            saveSchedules();
+            renderSchedules();
+        }
+
+        // 任务功能
+        function renderTasks() {
+            const container = document.getElementById('taskList');
+            let filtered = tasks;
+
+            if (currentTaskTab === 'pending') {
+                filtered = tasks.filter(t => !t.completed);
+            } else if (currentTaskTab === 'completed') {
+                filtered = tasks.filter(t => t.completed);
+            }
+
+            filtered = filtered.slice(0, 3); // 最多显示3个
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding: 10px;">暂无任务</div>';
                 return;
             }
 
-            list.innerHTML = reminders.map(r => {
-                const timeLeft = r.time - now;
-                const isOverdue = timeLeft < 0;
-                const isUpcoming = timeLeft > 0 && timeLeft < 300000;
-
-                let statusClass = '';
-                if (isOverdue) statusClass = 'overdue';
-                else if (isUpcoming) statusClass = 'upcoming';
-
-                const timeStr = new Date(r.time).toLocaleString('zh-CN', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                let timeLabel = timeStr;
-                if (isOverdue) timeLabel = '已过期';
-                else if (timeLeft < 60000) timeLabel += ' · 马上';
-                else if (timeLeft < 3600000) timeLabel += ` · ${Math.ceil(timeLeft/60000)}分后`;
-
-                return `
-                    <li class="reminder-item ${statusClass}">
-                        <div class="reminder-info">
-                            <div>
-                                <div class="reminder-title">${escapeHtml(r.title)}</div>
-                                <div class="reminder-time">${timeLabel}</div>
-                            </div>
-                        </div>
-                        <div class="reminder-actions">
-                            <button class="btn-small btn-delete" onclick="deleteReminder(${r.id})">删除</button>
-                        </div>
-                    </li>
-                `;
-            }).join('');
+            container.innerHTML = filtered.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})">
+                        ${task.completed ? '✓' : ''}
+                    </div>
+                    <span class="task-text">${escapeHtml(task.title)}</span>
+                </div>
+            `).join('');
         }
 
-        // 更新统计
-        function updateTaskStats() {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.completed).length;
-            const pending = total - completed;
-
-            document.getElementById('totalTasks').textContent = total;
-            document.getElementById('pendingTasks').textContent = pending;
-            document.getElementById('completedTasks').textContent = completed;
+        function switchTaskTab(tab, btn) {
+            currentTaskTab = tab;
+            document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTasks();
         }
 
-        // 任务操作
         function toggleTask(id) {
             const task = tasks.find(t => t.id === id);
             if (task) {
@@ -1485,86 +1069,110 @@
                 saveTasks();
                 renderTasks();
                 updateTaskStats();
-                if (task.completed) {
-                    showToast('已完成！');
-                    vibrate();
+            }
+        }
+
+        function updateTaskStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const pending = total - completed;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('completedCount').textContent = completed;
+        }
+
+        function showAddTaskModal() {
+            document.getElementById('addTaskModal').classList.add('show');
+            setTimeout(() => document.getElementById('newTaskInput').focus(), 100);
+        }
+
+        function closeAddTaskModal() {
+            document.getElementById('addTaskModal').classList.remove('show');
+            document.getElementById('newTaskInput').value = '';
+        }
+
+        function confirmAddTask() {
+            const input = document.getElementById('newTaskInput');
+            const title = input.value.trim();
+            if (!title) return;
+
+            tasks.push({
+                id: Date.now(),
+                title,
+                completed: false,
+                createdAt: Date.now()
+            });
+
+            saveTasks();
+            renderTasks();
+            updateTaskStats();
+            closeAddTaskModal();
+            showToast('任务已添加');
+        }
+
+        // 倒计时
+        function startCountdown(minutes) {
+            stopCountdown();
+            let seconds = minutes * 60;
+            updateCountdownDisplay(seconds);
+
+            // 更新按钮状态
+            document.querySelectorAll('.count-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            countdownInterval = setInterval(() => {
+                seconds--;
+                updateCountdownDisplay(seconds);
+
+                if (seconds <= 0) {
+                    stopCountdown();
+                    showAlarm(`${minutes}分钟倒计时结束`);
                 }
-            }
+            }, 1000);
+
+            showToast(`${minutes}分钟倒计时开始`);
         }
 
-        function deleteTask(id) {
-            if (confirm('确定删除这个任务吗？')) {
-                tasks = tasks.filter(t => t.id !== id);
-                saveTasks();
-                renderTasks();
-                updateTaskStats();
-                showToast('已删除');
-                vibrate();
+        function stopCountdown() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
             }
+            document.getElementById('countdown').textContent = '00:00';
+            document.querySelectorAll('.count-btn').forEach(btn => btn.classList.remove('active'));
         }
 
-        function deleteReminder(id) {
-            if (confirm('确定删除这个提醒吗？')) {
-                reminders = reminders.filter(r => r.id !== id);
-                saveReminders();
-                renderReminders();
-                showToast('已删除');
-                vibrate();
-            }
+        function updateCountdownDisplay(seconds) {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('countdown').textContent = `${mins}:${secs}`;
         }
 
-        // 检查提醒
+        // 提醒检查
         function checkReminders() {
             const now = Date.now();
-            reminders.forEach(r => {
-                if (!r.notified && r.time <= now) {
-                    triggerAlarm(r.title);
-                    r.notified = true;
-                    saveReminders();
-                    renderReminders();
+            schedules.forEach(s => {
+                if (!s.completed && s.time && s.time <= now && s.time > now - 60000) {
+                    showAlarm(s.title);
+                    s.completed = true;
+                    saveSchedules();
+                    renderSchedules();
                 }
             });
         }
 
-        // 触发闹钟
-        function triggerAlarm(title) {
-            document.getElementById('alarmTitle').textContent = '⏰ 时间到！';
-            document.getElementById('alarmMessage').textContent = title;
+        function showAlarm(message) {
+            document.getElementById('alarmTitle').textContent = '时间到！';
+            document.getElementById('alarmMessage').textContent = message;
             document.getElementById('alarmModal').classList.add('show');
 
-            playAlarmSound();
-            vibrateLong();
+            // 播放提示音
+            playSound();
 
+            // 浏览器通知
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('⏰ 时间到！', { body: title });
-            }
-        }
-
-        function vibrateLong() {
-            if ('vibrate' in navigator) {
-                navigator.vibrate([200, 100, 200, 100, 400]);
-            }
-        }
-
-        function playAlarmSound() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                [0, 0.5, 1].forEach(delay => {
-                    setTimeout(() => {
-                        const osc = audioContext.createOscillator();
-                        const gain = audioContext.createGain();
-                        osc.connect(gain);
-                        gain.connect(audioContext.destination);
-                        osc.frequency.value = 880;
-                        osc.type = 'sine';
-                        gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                        osc.start(audioContext.currentTime);
-                        osc.stop(audioContext.currentTime + 0.3);
-                    }, delay * 1000);
-                });
-            } catch (e) {
-                console.log('Audio play failed:', e);
+                new Notification('⏰ 时间到！', { body: message });
             }
         }
 
@@ -1572,64 +1180,55 @@
             document.getElementById('alarmModal').classList.remove('show');
         }
 
-        // 倒计时
-        function startQuickTimer(minutes) {
-            stopQuickTimer();
-            let seconds = minutes * 60;
-            updateCountdownDisplay(seconds);
-
-            countdownInterval = setInterval(() => {
-                seconds--;
-                updateCountdownDisplay(seconds);
-
-                if (seconds <= 0) {
-                    stopQuickTimer();
-                    document.getElementById('alarmTitle').textContent = '⏰ 倒计时结束！';
-                    document.getElementById('alarmMessage').textContent = `${minutes}分钟到了`;
-                    document.getElementById('alarmModal').classList.add('show');
-                    playAlarmSound();
-                    vibrateLong();
-                }
-            }, 1000);
-
-            showToast(`${minutes}分钟倒计时开始`);
-            vibrate();
+        function playSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                [0, 0.3, 0.6].forEach(delay => {
+                    setTimeout(() => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = 800;
+                        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        osc.start(audioContext.currentTime);
+                        osc.stop(audioContext.currentTime + 0.2);
+                    }, delay * 1000);
+                });
+            } catch (e) {}
         }
 
-        function stopQuickTimer() {
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-                countdownInterval = null;
-            }
-            document.getElementById('countdown').textContent = '00:00';
-        }
-
-        function updateCountdownDisplay(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            document.getElementById('countdown').textContent =
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // 显示提示
+        // 工具函数
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        // HTML转义
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // 防止页面滚动反弹（iOS）
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('.modal-content')) return;
-        }, { passive: true });
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function saveSchedules() {
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+        }
+
+        // 回车提交
+        document.getElementById('scheduleInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addSchedule();
+        });
+
+        document.getElementById('newTaskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') confirmAddTask();
+        });
     </script>
 </body>
 </html>
