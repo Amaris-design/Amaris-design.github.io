@@ -1409,6 +1409,22 @@
         document.getElementById('newTaskInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') confirmAddTask();
         });
+
+        // 暴露函数到全局作用域，供 HTML onclick 使用
+        window.addSchedule = addSchedule;
+        window.deleteSchedule = deleteSchedule;
+        window.switchTaskTab = switchTaskTab;
+        window.toggleTask = toggleTask;
+        window.showAddTaskModal = showAddTaskModal;
+        window.closeAddTaskModal = closeAddTaskModal;
+        window.confirmAddTask = confirmAddTask;
+        window.startCountdown = startCountdown;
+        window.stopCountdown = stopCountdown;
+        window.startVoice = startVoice;
+        window.stopVoice = stopVoice;
+        window.confirmVoiceAdd = confirmVoiceAdd;
+        window.closeVoiceModal = closeVoiceModal;
+        window.closeAlarm = closeAlarm;
     </script>
 </body>
 </html>
