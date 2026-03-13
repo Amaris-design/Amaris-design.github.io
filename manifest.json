@@ -1,0 +1,22 @@
+{
+  "name": "时间管理小助手",
+  "short_name": "时间管理",
+  "description": "智能语音时间管理助手 - 语音添加任务和提醒",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color":="#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%23667eea' width='192' height='192' rx='40'/%3E%3Ctext x='96' y='120' font-size='80' text-anchor='middle'%3E🎯%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%23667eea' width='512' height='512' rx='100'/%3E%3Ctext x='256' y='320' font-size='200' text-anchor='middle'%3E🎯%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
